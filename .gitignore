@@ -1,0 +1,23 @@
+# Do not check in personal env variables
+env.sh
+
+# Agent download sub-dirs
+3.*/**
+4.*/**
+*-build*/**
+
+# Ignore backups of run.sh/env.sh
+*.sh.*
+
+# Ignore Dockerfiles - built on-demand
+ECommerce-LBR/Dockerfile
+ECommerce-Tomcat/Dockerfile
+ECommerce-Synapse/Dockerfile
+ECommerce-FulfillmentClient
+
+# ECommerce-Load build files
+ECommerce-Load/.gradle/
+ECommerce-Load/.idea/
+
+# Ignore jdk rpms
+dk-*.rpm
