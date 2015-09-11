@@ -1,4 +1,18 @@
-source env.sh
+# Controller host/port
+CONTR_HOST=
+CONTR_PORT=
+APP_NAME=
+VERSION=
+
+# Analytics config parameters
+ACCOUNT_NAME=
+ACCESS_KEY=
+EVENT_ENDPOINT=
+
+# SIM Hierarchy parameters
+# Uncomment to use AWS metadata
+SIM_HIERACRHY_1=
+SIM_HIERARCHY_2=
 
 echo -n "adcapitaldb: "; docker run --name adcapitaldb -e MYSQL_ROOT_PASSWORD=singcontroller -p 3306:3306 -d mysql
 echo -n "rabbitmq: "; docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 5672:5672 -p 15672:15672 rabbitmq:3.5.4-management
