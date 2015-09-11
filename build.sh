@@ -15,6 +15,7 @@ cleanUp() {
   (cd ADCapital-ApplicationProcessor && rm -rf AD-Capital)
   (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip)
   (cd ADCapital-QueueReader && rm -rf AD-Capital)
+  (cd ADCapital-Load && rm -rf AD-Capital-Load)
   (cd ADCapital-Java && rm -f jdk-linux-x64.rpm)
 
   # Remove dangling images left-over from build
@@ -97,3 +98,7 @@ echo; echo "Building ADCapital-ApplicationProcessor..."
 echo; echo "Building ADCapital-QueueReader..."
 (cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git)
 (cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .)
+
+echo; echo "Building ADCapital-Load..."
+(cd ADCapital-Load && git clone https://github.com/Appdynamics/AD-Capital-Load.git)
+(cd ADCapital-Load && docker build -t appdynamics/adcapital-load .)
