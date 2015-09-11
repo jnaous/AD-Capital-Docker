@@ -2,7 +2,10 @@
 
 source /env.sh
 
-cd /AD-Capital; gradle createDB
+if [ "${create_schema}" == "true" ]; then
+	cd /AD-Capital; gradle createDB
+fi
+
 
 if [ -n "${rest}" ]; then
         cp  /AD-Capital/Rest/build/libs/Rest.war /tomcat/webapps;
@@ -11,6 +14,23 @@ fi
 if [ -n "${portal}" ]; then
  	cp /AD-Capital/Portal/build/libs/portal.war /tomcat/webapps;
 fi
+
+if [ -n "${processor}" ]; then
+ 	cp /AD-Capital/Processor/build/libs/processor.war /tomcat/webapps;
+fi
+
+CONTROLLER_INFO_SETTINGS="s/CONTROLLERHOST/${CONTROLLER}/g;
+s/CONTROLLERPORT/${APPD_PORT}/g;
+s/APP/${APP_NAME}/g;s/TIER/${TIER_NAME}/g;
+s/NODE/${NODE_NAME}/g;
+s/FOO/${SIM_HIERARCHY_1}/g;
+s/BAR/${SIM_HIERARCHY_2}/g;
+s/BAZ/${HOSTNAME}/g;
+s/ACCOUNTACCESSKEY/${ACCESS_KEY}/g"
+
+sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CATALINA_HOME}/appagent/conf/controller-info.xml
+
+echo "Starting Tomcat with App Server Agent..."
 
 echo APP_AGENT_JAVA_OPTS: ${APP_AGENT_JAVA_OPTS};
 echo JMX_OPTS: ${JMX_OPTS}

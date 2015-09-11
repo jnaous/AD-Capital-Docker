@@ -13,7 +13,10 @@ cleanUp() {
   (cd ADCapital-Tomcat && rm -rf AD-Capital)
   (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip AnalyticsAgent.zip)
   (cd ADCapital-ApplicationProcessor && rm -rf AD-Capital)
+  (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip)
+  (cd ADCapital-QueueReader && rm -rf AD-Capital)
   (cd ADCapital-Java && rm -f jdk-linux-x64.rpm)
+
   # Remove dangling images left-over from build
   if [[ `docker images -q --filter "dangling=true"` ]]
   then
@@ -66,16 +69,22 @@ else
     echo "  ${ANALYTICS_AGENT}"
     cp ${ANALYTICS_AGENT} ADCapital-Tomcat/AnalyticsAgent.zip
     cp ${ANALYTICS_AGENT} ADCapital-ApplicationProcessor/AnalyticsAgent.zip
+    cp ${ANALYTICS_AGENT} ADCapital-QueueReader/AnalyticsAgent.zip
 
     # Add analytics agent when creating Dockerfile for machine agent
     DOCKERFILE_OPTIONS="analytics"
 fi
 
+echo " ${APP_SERVER_AGENT}"
 cp ${APP_SERVER_AGENT} ADCapital-Tomcat/AppServerAgent.zip
 echo "Copied Agents for ADCapital-Tomcat"
 
+
 cp ${APP_SERVER_AGENT} ADCapital-ApplicationProcessor/AppServerAgent.zip
 echo "Copied Agents for ADCapital-ApplicationProcessor"
+
+cp ${APP_SERVER_AGENT} ADCapital-QueueReader/AppServerAgent.zip
+echo "Copied Agents for ADCapital-QueueReader"
 
 echo; echo "Building ADCapital-Tomcat..."
 (cd ADCapital-Tomcat && git clone https://github.com/Appdynamics/AD-Capital.git)
@@ -84,3 +93,7 @@ echo; echo "Building ADCapital-Tomcat..."
 echo; echo "Building ADCapital-ApplicationProcessor..."
 (cd ADCapital-ApplicationProcessor && git clone https://github.com/Appdynamics/AD-Capital.git)
 (cd ADCapital-ApplicationProcessor && docker build -t appdynamics/adcapital-applicationprocessor .)
+
+echo; echo "Building ADCapital-QueueReader..."
+(cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git)
+(cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .)
