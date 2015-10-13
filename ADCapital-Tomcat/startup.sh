@@ -1,11 +1,9 @@
 #!/bin/sh
-
 source /env.sh
 
 if [ "${create_schema}" == "true" ]; then
 	cd /AD-Capital; gradle createDB
 fi
-
 
 if [ -n "${rest}" ]; then
         cp  /AD-Capital/Rest/build/libs/Rest.war /tomcat/webapps;
@@ -26,6 +24,7 @@ s/NODE/${NODE_NAME}/g;
 s/FOO/${SIM_HIERARCHY_1}/g;
 s/BAR/${SIM_HIERARCHY_2}/g;
 s/BAZ/${HOSTNAME}/g;
+s/ACCOUNTNAME/${ACCOUNT_NAME%%_*}/g;
 s/ACCOUNTACCESSKEY/${ACCESS_KEY}/g"
 
 sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CATALINA_HOME}/appagent/conf/controller-info.xml

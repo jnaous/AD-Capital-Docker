@@ -1,5 +1,4 @@
 #!/bin/sh
-
 source /env.sh
 
 CONTROLLER_INFO_SETTINGS="s/CONTROLLERHOST/${CONTROLLER}/g;
@@ -9,6 +8,7 @@ s/NODE/${NODE_NAME}/g;
 s/FOO/${SIM_HIERARCHY_1}/g;
 s/BAR/${SIM_HIERARCHY_2}/g;
 s/BAZ/${HOSTNAME}/g;
+s/ACCOUNTNAME/${ACCOUNT_NAME%%_*}/g;
 s/ACCOUNTACCESSKEY/${ACCESS_KEY}/g"
 
 sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CLIENT_HOME}/appagent/conf/controller-info.xml

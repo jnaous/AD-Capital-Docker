@@ -1,13 +1,5 @@
 #! /bin/bash
-
-if [ "$#" -ne 1 ]; then
-    echo "Usage: start-analytics <events-service-endpoint>"
-    exit
-fi
-
-EVENT_ENDPOINT=${1}
-ACCOUNT_NAME=${ACCOUNT_NAME}
-ACCESS_KEY=${ACCOUNT_ACCESS_KEY}
+source /env.sh
 
 # Configure analytics-agent.properties
 aaprop=${ANALYTICS_AGENT_HOME}/conf/analytics-agent.properties
