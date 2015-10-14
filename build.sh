@@ -10,11 +10,11 @@
 
 cleanUp() {
   if [ -z ${PREPARE_ONLY} ]; then 
-    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh controller-info.xml)
     (cd ADCapital-Tomcat && rm -rf AD-Capital)
-    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh controller-info.xml)
     (cd ADCapital-ApplicationProcessor && rm -rf AD-Capital)
-    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh controller-info.xml)
     (cd ADCapital-QueueReader && rm -rf AD-Capital)
     (cd ADCapital-Load && rm -rf AD-Capital-Load)
     (cd ADCapital-Java && rm -f jdk-linux-x64.rpm)
@@ -136,10 +136,15 @@ cp ${APP_SERVER_AGENT} ADCapital-Tomcat/AppServerAgent.zip
 cp ${APP_SERVER_AGENT} ADCapital-ApplicationProcessor/AppServerAgent.zip
 cp ${APP_SERVER_AGENT} ADCapital-QueueReader/AppServerAgent.zip
 
-echo "Copying environment settings for containers"
+echo "Copying environment settings"
 cp env.sh ADCapital-Tomcat
 cp env.sh ADCapital-ApplicationProcessor
 cp env.sh ADCapital-QueueReader
+
+echo "Copying controller-info.xml" 
+cp controller-info.xml ADCapital-Tomcat 
+cp controller-info.xml ADCapital-ApplicationProcessor
+cp controller-info.xml ADCapital-QueueReader
 
 # Skip build if -p flag (Prepare only) set
 if [ "${PREPARE_ONLY}" = true ] ; then

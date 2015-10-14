@@ -35,36 +35,32 @@ if [ -n "${portal}" ]; then
     if [ -z "${TIER_NAME}" ]; then
       export TIER_NAME="Portal-Services";
     fi
-fi
 
-if [ -n "${rest}" ]; then
+elif [ -n "${rest}" ]; then
     if [ -z "${NODE_NAME}" ]; then
       export NODE_NAME="AD-Capital_REST_NODE";
     fi
     if [ -z "${TIER_NAME}" ]; then
       export TIER_NAME="Authentication-Services";
     fi
-fi
 
-if [ -n "${processor}" ]; then
+elif [ -n "${processor}" ]; then
     if [ -z "${NODE_NAME}" ]; then
         export NODE_NAME="AD-Capital_PROCESSOR_NODE";
     fi
     if [ -z "${TIER_NAME}" ]; then
         export TIER_NAME="LoanProcessor-Services";
     fi
-fi
 
-if [ -n "${queuereader}" ]; then
+elif [ -n "${queuereader}" ]; then
     if [ -z "${NODE_NAME}" ]; then
         export NODE_NAME="AD-Capital_QUEUEREADER_NODE";
     fi
     if [ -z "${TIER_NAME}" ]; then
         export TIER_NAME="QueueReader-Services";
     fi
-fi
 
-if [ -n "${verification}" ]; then
+elif [ -n "${verification}" ]; then
     if [ -z "${NODE_NAME}" ]; then
         export NODE_NAME="AD-Capital_VERIFICATION_NODE";
     fi

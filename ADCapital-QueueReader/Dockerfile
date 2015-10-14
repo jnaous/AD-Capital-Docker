@@ -40,6 +40,7 @@ ADD AD-Capital /AD-Capital
 # Gradle build
 RUN cd /AD-Capital;gradle uberjar; mkdir ${CLIENT_HOME}; cp /AD-Capital/QueueReader/build/libs/QueueReader.jar ${CLIENT_HOME};
 
+ADD controller-info.xml /
 ADD startup.sh /
 ADD env.sh /
 RUN chmod 744 /startup.sh

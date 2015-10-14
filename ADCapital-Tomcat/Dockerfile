@@ -31,6 +31,11 @@ RUN rm -f AnalyticsAgent.zip
 ADD start-analytics.sh /usr/bin/start-analytics
 RUN chmod 744 /usr/bin/start-analytics
 
+# Add Log Analytics job files
+ADD portal-log4j.job ${ANALYTICS_AGENT_HOME}/
+ADD processor-log4j.job ${ANALYTICS_AGENT_HOME}/
+ADD rest-log4j.job ${ANALYTICS_AGENT_HOME}/
+
 RUN export TERM=${TERM:-dumb}
 
 # Copy AD-Capital project from build dir
@@ -39,6 +44,7 @@ ADD AD-Capital /AD-Capital
 # Gradle build
 RUN cd /AD-Capital;gradle build;
 
+ADD controller-info.xml /
 ADD startup.sh /
 ADD env.sh /
 RUN chmod 744 /startup.sh
