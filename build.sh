@@ -38,24 +38,35 @@ promptForAgents() {
 
 buildContainers() {
   echo; echo "Building ADCapital-Java..."
-  (cd ADCapital-Java; docker build -t appdynamics/adcapital-java .)
+  (cd ADCapital-Java; docker build -t appdynamics/adcapital-java .) || exit $?
 
   echo; echo "Building ADCapital-Tomcat..."
-  (cd ADCapital-Tomcat && git clone https://github.com/Appdynamics/AD-Capital.git)
-  (cd ADCapital-Tomcat && docker build -t appdynamics/adcapital-tomcat .)
+  (cd ADCapital-Tomcat && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
+  (cd ADCapital-Tomcat && docker build -t appdynamics/adcapital-tomcat .) || exit $?
 
   echo; echo "Building ADCapital-ApplicationProcessor..."
-  (cd ADCapital-ApplicationProcessor && git clone https://github.com/Appdynamics/AD-Capital.git)
-  (cd ADCapital-ApplicationProcessor && docker build -t appdynamics/adcapital-applicationprocessor .)
+  (cd ADCapital-ApplicationProcessor && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
+  (cd ADCapital-ApplicationProcessor && docker build -t appdynamics/adcapital-applicationprocessor .) || exit $?
 
   echo; echo "Building ADCapital-QueueReader..."
-  (cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git)
-  (cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .)
+  (cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
+  (cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .) || exit $?
 
   echo; echo "Building ADCapital-Load..."
-  (cd ADCapital-Load && git clone https://github.com/Appdynamics/AD-Capital-Load.git)
-  (cd ADCapital-Load && docker build -t appdynamics/adcapital-load .)
+  (cd ADCapital-Load && git clone https://github.com/Appdynamics/AD-Capital-Load.git) || exit $?
+  (cd ADCapital-Load && docker build -t appdynamics/adcapital-load .) || exit $?
 }
+
+# Usage information
+if [[ $1 == *--help* ]]
+then
+  echo "Specify agent locations: build.sh
+          -a <Path to App Server Agent>
+          -y <Path to Analytics Agent>
+          -j <Path to Oracle JDK7>"
+  echo "Prompt for agent locations: build.sh"
+  exit 0
+fi
 
 # Prompt for location of App Server, Machine and Database Agents
 if  [ $# -eq 0 ]
@@ -105,7 +116,7 @@ fi
 if [ -z ${ORACLE_JDK7} ]
 then
     echo "Downloading Oracle Java 7 JDK"
-    (cd ADCapital-Java; curl -j -k -L -H "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u71-b13/jdk-7u71-linux-x64.rpm -o jdk-linux-x64.rpm)
+    (cd ADCapital-Java; curl -j -k -L -H "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u71-b13/jdk-7u71-linux-x64.rpm -o jdk-linux-x64.rpm) || exit $?
 else
     echo "Using JDK: ${ORACLE_JDK7}"
     cp ${ORACLE_JDK7} ADCapital-Java/jdk-linux-x64.rpm

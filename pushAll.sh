@@ -1,9 +1,22 @@
 #! /bin/bash
-if [ -z "$1" ]; then
-  read -e -p "Version: " TAG_VERSION;
+
+if [ "$#" -eq 1 ]; then
+  export TAG_VERSION=$1
+  echo "Pushing images with tag: ${TAG_VERSION} to dockerhub"
+  for i in $(docker images | grep "appdynamics/adcapital" | grep $TAG_VERSION | awk {'print $1'}); do
+    echo Pushing:  $i:${TAG_VERSION}
+    docker push $i:$TAG_VERSION
+  done
+elif [ "$#" -eq 3 ]; then
+  export TAG_VERSION=$1;
+  export REGISTRY=$2;
+  export APP_NAME=$3;
+  echo "Pushing images with tag: ${TAG_VERSION} to ${REGISTRY}/${APP_NAME}"
+  for i in $(docker images | grep ${REGISTRY} | grep ${APP_NAME} | grep $TAG_VERSION | awk {'print $1'}); do
+    echo Pushing:  $i:${TAG_VERSION}
+    docker push $i:$TAG_VERSION
+  done
 else
-        export TAG_VERSION=$1;
+  echo "Usage: pushAll.sh <tag> [<registry> <application>]"
+  exit
 fi
-for i in $(docker images | grep $TAG_VERSION | awk {'print $1'}); do
-	docker push $i:$TAG_VERSION
-done
