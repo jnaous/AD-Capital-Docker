@@ -10,10 +10,13 @@ s/BAR/${SIM_HIERARCHY_2}/g;
 s/BAZ/${HOSTNAME}/g;
 s/ACCOUNTNAME/${ACCOUNT_NAME%%_*}/g;
 s/ACCOUNTACCESSKEY/${ACCESS_KEY}/g"
+# Uncomment to configure App Server Agent using controller-info.xml
+# sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CLIENT_HOME}/appagent/conf/controller-info.xml
 
-#sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CLIENT_HOME}/appagent/conf/controller-info.xml
+# Start standalone Analytics Agent
+start-analytics
 
-echo "Starting Client ...."
+# Start App Server Agent
 echo APP_AGENT_JAVA_OPTS: ${APP_AGENT_JAVA_OPTS};
 echo JMX_OPTS: ${JMX_OPTS}
 cd ${CATALINA_HOME}/bin;

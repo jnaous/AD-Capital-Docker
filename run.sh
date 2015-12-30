@@ -60,6 +60,4 @@ echo -n "queuereader: "; docker run --name queuereader -h ${APP_NAME}-queuereade
 	sleep 10
 
 echo -n "adcapitalload: "; docker run --name=adcapitalload --link portal:portal --link processor:processor -d appdynamics/adcapital-load
-sleep 10
 
-. ./startAnalyticsAgents.sh

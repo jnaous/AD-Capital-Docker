@@ -30,7 +30,6 @@ fi
 
 if [ -n "${rest}" ]; then
     cp  /AD-Capital/Rest/build/libs/Rest.war /tomcat/webapps;
-
     cp /${ANALYTICS_AGENT_HOME}/rest-log4j.job ${ANALYTICS_AGENT_HOME}/conf/job/
     jobfile=${ANALYTICS_AGENT_HOME}/conf/job/rest-log4j.job
     configureLogAnalytics
@@ -38,7 +37,6 @@ if [ -n "${rest}" ]; then
 
 elif [ -n "${portal}" ]; then
     cp /AD-Capital/Portal/build/libs/portal.war /tomcat/webapps;
-    
     cp /${ANALYTICS_AGENT_HOME}/portal-log4j.job ${ANALYTICS_AGENT_HOME}/conf/job/
     jobfile=${ANALYTICS_AGENT_HOME}/conf/job/portal-log4j.job
     configureLogAnalytics
@@ -46,7 +44,6 @@ elif [ -n "${portal}" ]; then
 
 elif [ -n "${processor}" ]; then
     cp /AD-Capital/Processor/build/libs/processor.war /tomcat/webapps;
-
     cp /${ANALYTICS_AGENT_HOME}/processor-log4j.job ${ANALYTICS_AGENT_HOME}/conf/job/
     jobfile=${ANALYTICS_AGENT_HOME}/conf/job/processor-log4j.job
     configureLogAnalytics
@@ -62,13 +59,14 @@ s/BAR/${SIM_HIERARCHY_2}/g;
 s/BAZ/${HOSTNAME}/g;
 s/ACCOUNTNAME/${ACCOUNT_NAME%%_*}/g;
 s/ACCOUNTACCESSKEY/${ACCESS_KEY}/g"
+# Uncomment to configure App Server Agent using controller-info.xml
+# sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CATALINA_HOME}/appagent/conf/controller-info.xml
 
-#sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CATALINA_HOME}/appagent/conf/controller-info.xml
+# Start standalone Analytics Agent
+start-analytics
 
-echo "Starting Tomcat with App Server Agent..."
-
+# Start App Server Agent
 echo APP_AGENT_JAVA_OPTS: ${APP_AGENT_JAVA_OPTS};
 echo JMX_OPTS: ${JMX_OPTS}
 cd ${CATALINA_HOME}/bin;
-
 java -javaagent:${CATALINA_HOME}/appagent/javaagent.jar ${APP_AGENT_JAVA_OPTS} ${JMX_OPTS} -cp ${CATALINA_HOME}/bin/bootstrap.jar:${CATALINA_HOME}/bin/tomcat-juli.jar org.apache.catalina.startup.Bootstrap > appserver-agent-startup.out 2>&1

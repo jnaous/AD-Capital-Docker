@@ -35,5 +35,6 @@ else
         echo "${monxml}: already enabled or doesn't exist"
 fi
 
-echo "Starting Analytics Agent..."
-(cd ${ANALYTICS_AGENT_HOME}; sh bin/analytics-agent start)
+echo -n "Starting Analytics Agent..."
+(cd ${ANALYTICS_AGENT_HOME}; nohup bin/analytics-agent.sh start &)
+echo "done"
