@@ -50,17 +50,15 @@ elif [ -n "${processor}" ]; then
     rm -f /${ANALYTICS_AGENT_HOME}/*.job
 fi
 
-CONTROLLER_INFO_SETTINGS="s/CONTROLLERHOST/${CONTROLLER}/g;
-s/CONTROLLERPORT/${APPD_PORT}/g;
-s/APP/${APP_NAME}/g;s/TIER/${TIER_NAME}/g;
-s/NODE/${NODE_NAME}/g;
-s/FOO/${SIM_HIERARCHY_1}/g;
-s/BAR/${SIM_HIERARCHY_2}/g;
-s/BAZ/${HOSTNAME}/g;
-s/ACCOUNTNAME/${ACCOUNT_NAME%%_*}/g;
-s/ACCOUNTACCESSKEY/${ACCESS_KEY}/g"
-# Uncomment to configure App Server Agent using controller-info.xml
-# sed -e "${CONTROLLER_INFO_SETTINGS}" /controller-info.xml > /${CATALINA_HOME}/appagent/conf/controller-info.xml
+# Configure App Server Agent using controller-info.xml
+sed -i "s/<controller-host>/<controller-host>${CONTROLLER}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
+sed -i "s/<controller-port>/<controller-port>${APPD_PORT}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
+sed -i "s/<account-access-key>/<account-access-key>${ACCESS_KEY}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
+sed -i "s/<application-name>/<application-name>${APP_NAME}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
+sed -i "s/<tier-name>/<tier-name>${TIER_NAME}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
+sed -i "s/<node-name>/<node-name>${NODE_NAME}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
+# Uncomment for multi-tenant controllers
+# sed -i "s/<account-name>/<account-name>${ACCOUNT_NAME%%_*}/g" /${CATALINA_HOME}/appagent/conf/controller-info.xml
 
 # Start standalone Analytics Agent
 start-analytics

@@ -44,7 +44,6 @@ ADD AD-Capital /AD-Capital
 # Gradle build
 RUN cd /AD-Capital;gradle build;
 
-ADD controller-info.xml /
 ADD startup.sh /
 ADD env.sh /
 RUN chmod 744 /startup.sh

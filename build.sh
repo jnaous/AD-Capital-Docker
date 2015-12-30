@@ -1,6 +1,6 @@
 # This script is provided for illustration purposes only.
 #
-# To build the ECommerce demo application, you will need to download the following components:
+# To build the ADCapital demo application, you will need to download the following components:
 # 1. An appropriate version of the Oracle Java 7 JDK
 #    (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 # 2. Correct versions for the AppDynamics AppServer Agen and Analytics Agent for your Controller installation
@@ -10,11 +10,11 @@
 
 cleanUp() {
   if [ -z ${PREPARE_ONLY} ]; then 
-    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh controller-info.xml)
+    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
     (cd ADCapital-Tomcat && rm -rf AD-Capital)
-    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh controller-info.xml)
+    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
     (cd ADCapital-ApplicationProcessor && rm -rf AD-Capital)
-    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh controller-info.xml)
+    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
     (cd ADCapital-QueueReader && rm -rf AD-Capital)
     (cd ADCapital-Load && rm -rf AD-Capital-Load)
     (cd ADCapital-Java && rm -f jdk-linux-x64.rpm)
@@ -151,11 +151,6 @@ echo "Copying environment settings"
 cp env.sh ADCapital-Tomcat
 cp env.sh ADCapital-ApplicationProcessor
 cp env.sh ADCapital-QueueReader
-
-echo "Copying controller-info.xml" 
-cp controller-info.xml ADCapital-Tomcat 
-cp controller-info.xml ADCapital-ApplicationProcessor
-cp controller-info.xml ADCapital-QueueReader
 
 # Skip build if -p flag (Prepare only) set
 if [ "${PREPARE_ONLY}" = true ] ; then
