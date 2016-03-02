@@ -10,11 +10,11 @@
 
 cleanUp() {
   if [ -z ${PREPARE_ONLY} ]; then 
-    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh)
     (cd ADCapital-Tomcat && rm -rf AD-Capital)
-    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh)
     (cd ADCapital-ApplicationProcessor && rm -rf AD-Capital)
-    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip AnalyticsAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh)
     (cd ADCapital-QueueReader && rm -rf AD-Capital)
     (cd ADCapital-Load && rm -rf AD-Capital-Load)
     (cd ADCapital-Java && rm -f jdk-linux-x64.rpm)
@@ -32,7 +32,7 @@ trap cleanUp EXIT
 
 promptForAgents() {
   read -e -p "Enter path to App Server Agent: " APP_SERVER_AGENT
-  read -e -p "Enter path to Analytics Agent: " ANALYTICS_AGENT
+  read -e -p "Enter path to Machine Agent (zip): " MACHINE_AGENT
   read -e -p "Enter path to Oracle JDK7: " ORACLE_JDK7
 }
 
@@ -62,7 +62,7 @@ if [[ $1 == *--help* ]]
 then
   echo "Specify agent locations: build.sh
           -a <Path to App Server Agent>
-          -y <Path to Analytics Agent>
+          -m <Path to Machine Agent>
           -j <Path to Oracle JDK7>"
   echo "Prompt for agent locations: build.sh"
   exit 0
@@ -74,7 +74,7 @@ then
   promptForAgents
 else
   # Allow user to specify locations of App Server and Analytics Agents
-  while getopts "a:y:j:p:" opt; do
+  while getopts "a:m:j:p:" opt; do
     case $opt in
       a)
         APP_SERVER_AGENT=$OPTARG
@@ -82,10 +82,10 @@ else
           echo "Not found: ${APP_SERVER_AGENT}"; exit
         fi
         ;;
-      y)
-        ANALYTICS_AGENT=$OPTARG 
-	if [ ! -e ${ANALYTICS_AGENT} ]; then
-          echo "Not found: ${ANALYTICS_AGENT}"; exit         
+      m)
+        MACHINE_AGENT=$OPTARG 
+	if [ ! -e ${MACHINE_AGENT} ]; then
+          echo "Not found: ${MACHINE_AGENT}"; exit         
         fi
         ;;
       j)
@@ -109,7 +109,7 @@ if [ -z ${APP_SERVER_AGENT} ]; then
     echo "Error: App Server Agent is required"; exit
 fi
 
-if [ -z ${ANALYTICS_AGENT} ]; then
+if [ -z ${MACHINE_AGENT} ]; then
     echo "Error: Analytics Agent is required"; exit
 fi
 
@@ -122,32 +122,21 @@ else
     cp ${ORACLE_JDK7} ADCapital-Java/jdk-linux-x64.rpm
 fi
 
-# If supplied, add standalone analytics agent to build
-if [ -z ${ANALYTICS_AGENT} ]
-then
-    echo "Skipping standalone Analytics Agent install"
-else
-    echo "Installing standalone Analytics Agent"
-    echo "  ${ANALYTICS_AGENT}"
-    cp ${ANALYTICS_AGENT} ADCapital-Tomcat/AnalyticsAgent.zip
-    cp ${ANALYTICS_AGENT} ADCapital-ApplicationProcessor/AnalyticsAgent.zip
-    cp ${ANALYTICS_AGENT} ADCapital-QueueReader/AnalyticsAgent.zip
+# Add Analytics config to build
+cp start-analytics.sh ADCapital-Tomcat
+cp start-analytics.sh ADCapital-ApplicationProcessor
+cp start-analytics.sh ADCapital-QueueReader
 
-    cp start-analytics.sh ADCapital-Tomcat
-    cp start-analytics.sh ADCapital-ApplicationProcessor
-    cp start-analytics.sh ADCapital-QueueReader
+# Add machine agent to build
+cp ${MACHINE_AGENT} ADCapital-Tomcat/MachineAgent.zip
+cp ${MACHINE_AGENT} ADCapital-ApplicationProcessor/MachineAgent.zip
+cp ${MACHINE_AGENT} ADCapital-QueueReader/MachineAgent.zip
 
-    # Add analytics agent when creating Dockerfile for machine agent
-    DOCKERFILE_OPTIONS="analytics"
-fi
-
-echo "Installing App Server Agent"
-echo " ${APP_SERVER_AGENT}"
+# Add App Server Agent to build
 cp ${APP_SERVER_AGENT} ADCapital-Tomcat/AppServerAgent.zip
 cp ${APP_SERVER_AGENT} ADCapital-ApplicationProcessor/AppServerAgent.zip
 cp ${APP_SERVER_AGENT} ADCapital-QueueReader/AppServerAgent.zip
 
-echo "Copying environment settings"
 cp env.sh ADCapital-Tomcat
 cp env.sh ADCapital-ApplicationProcessor
 cp env.sh ADCapital-QueueReader

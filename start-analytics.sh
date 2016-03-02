@@ -2,7 +2,7 @@
 source /env.sh
 
 # Configure analytics-agent.properties
-aaprop=${ANALYTICS_AGENT_HOME}/conf/analytics-agent.properties
+aaprop=${MACHINE_AGENT_HOME}/monitors/analytics-agent/conf/analytics-agent.properties
 
 if [ "$(grep '^http.event.endpoint=' $aaprop)" ]; then
         echo "${aaprop}: setting event.endpoint: ${EVENT_ENDPOINT}"
@@ -26,7 +26,7 @@ else
 fi
 
 # Configure monitor.xml
-monxml=${ANALYTICS_AGENT_HOME}/monitor.xml
+monxml=${MACHINE_AGENT_HOME}/monitors/analytics-agent/monitor.xml
 
 if [ "$(grep '<enabled>false</enabled>' $monxml)" ]; then
         echo "${monxml}: setting to "true""
@@ -34,7 +34,3 @@ if [ "$(grep '<enabled>false</enabled>' $monxml)" ]; then
 else
         echo "${monxml}: already enabled or doesn't exist"
 fi
-
-echo -n "Starting Analytics Agent..."
-(cd ${ANALYTICS_AGENT_HOME}; nohup bin/analytics-agent.sh start &)
-echo "done"

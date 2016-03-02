@@ -24,17 +24,16 @@ RUN cd ${CATALINA_HOME}/bin;chmod +x *.sh
 ADD AppServerAgent.zip /
 RUN unzip -q /AppServerAgent.zip -d ${CATALINA_HOME}/appagent; rm AppServerAgent.zip
 
-ENV ANALYTICS_AGENT_HOME /analytics-agent
-ADD AnalyticsAgent.zip /
-RUN unzip AnalyticsAgent.zip
-RUN rm -f AnalyticsAgent.zip
-ADD start-analytics.sh /usr/bin/start-analytics
-RUN chmod 744 /usr/bin/start-analytics
+# Zip Machine Agent Install
+ENV MACHINE_AGENT_HOME /machine-agent
+ADD MachineAgent.zip /
+RUN unzip -oq /MachineAgent.zip -d ${MACHINE_AGENT_HOME}
+RUN rm MachineAgent.zip
 
 # Add Log Analytics job files
-ADD portal-log4j.job ${ANALYTICS_AGENT_HOME}/
-ADD processor-log4j.job ${ANALYTICS_AGENT_HOME}/
-ADD rest-log4j.job ${ANALYTICS_AGENT_HOME}/
+ADD portal-log4j.job ${MACHINE_AGENT_HOME}/
+ADD processor-log4j.job ${MACHINE_AGENT_HOME}/
+ADD rest-log4j.job ${MACHINE_AGENT_HOME}/
 
 RUN export TERM=${TERM:-dumb}
 
@@ -47,6 +46,8 @@ RUN cd /AD-Capital;gradle build;
 ADD startup.sh /
 ADD env.sh /
 RUN chmod 744 /startup.sh
+ADD start-analytics.sh /usr/bin/start-analytics
+RUN chmod 744 /usr/bin/start-analytics
 
 # Note: This command should not return or the container will exit
 CMD "/startup.sh"

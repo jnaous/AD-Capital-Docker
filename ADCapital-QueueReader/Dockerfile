@@ -21,15 +21,16 @@ RUN curl -O -k https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERS
     && mv apache-tomcat-${TOMCAT_MINOR_VERSION} tomcat
 RUN cd ${CATALINA_HOME}/bin;chmod +x *.sh
 
+# App Server Agent
 ADD AppServerAgent.zip /
 RUN unzip -q /AppServerAgent.zip -d ${CATALINA_HOME}/appagent; rm AppServerAgent.zip
 
-ENV ANALYTICS_AGENT_HOME /analytics-agent
-ADD AnalyticsAgent.zip /
-RUN unzip AnalyticsAgent.zip
-RUN rm -f AnalyticsAgent.zip
-ADD start-analytics.sh /usr/bin/start-analytics
-RUN chmod 744 /usr/bin/start-analytics
+# Zip Machine Agent Install
+ENV MACHINE_AGENT_HOME /machine-agent
+ADD MachineAgent.zip /
+RUN unzip -oq /MachineAgent.zip -d ${MACHINE_AGENT_HOME}
+RUN rm MachineAgent.zip
+
 ENV CLIENT_HOME /opt/applicationprocessor
 
 RUN export TERM=${TERM:-dumb}
@@ -43,6 +44,8 @@ RUN cd /AD-Capital;gradle uberjar; mkdir ${CLIENT_HOME}; cp /AD-Capital/QueueRea
 ADD startup.sh /
 ADD env.sh /
 RUN chmod 744 /startup.sh
+ADD start-analytics.sh /usr/bin/start-analytics
+RUN chmod 744 /usr/bin/start-analytics
 
 # Note: This command should not return or the container will exit
 CMD "/startup.sh"

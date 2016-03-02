@@ -23,7 +23,7 @@ echo -n "rest: "; docker run --name rest -h ${APP_NAME}-rest -e create_schema=tr
 	-e ACCOUNT_NAME=${ACCOUNT_NAME} -e ACCESS_KEY=${ACCESS_KEY} -e EVENT_ENDPOINT=${EVENT_ENDPOINT} \
 	-e CONTROLLER=${CONTR_HOST} -e APPD_PORT=${CONTR_PORT} \
 	-e NODE_NAME=${APP_NAME}_REST_NODE -e APP_NAME=$APP_NAME -e TIER_NAME=Authentication-Service \
-	-e SIM_HIERARCHY_1=${SIM_HIERARCHY_1} -e SIM_HIERARCHY_2=${SIM_HIERARCHY_2} \
+	-e MACHINE_PATH_1=${MACHINE_PATH_1} -e MACHINE_PATH_2=${MACHINE_PATH_2} \
 	--link adcapitaldb:adcapitaldb -d appdynamics/adcapital-tomcat:$VERSION
 sleep 10
 
@@ -31,7 +31,7 @@ echo -n "portal: "; docker run --name portal -h ${APP_NAME}-portal -e portal=tru
 	-e ACCOUNT_NAME=${ACCOUNT_NAME} -e ACCESS_KEY=${ACCESS_KEY} -e EVENT_ENDPOINT=${EVENT_ENDPOINT} \
 	-e CONTROLLER=${CONTR_HOST} -e APPD_PORT=${CONTR_PORT} \
 	-e NODE_NAME=${APP_NAME}_PORTAL_NODE -e APP_NAME=$APP_NAME -e TIER_NAME=Portal-Services \
-	-e SIM_HIERARCHY_1=${SIM_HIERARCHY_1} -e SIM_HIERARCHY_2=${SIM_HIERARCHY_2} \
+	-e MACHINE_PATH_1=${MACHINE_PATH_1} -e MACHINE_PATH_2=${MACHINE_PATH_2} \
 	--link rest:rest --link rabbitmq:rabbitmq -d appdynamics/adcapital-tomcat:$VERSION
 sleep 10
 
@@ -39,7 +39,7 @@ echo -n "verification: "; docker run --name verification -h ${APP_NAME}-verifica
 	-e ACCOUNT_NAME=${ACCOUNT_NAME} -e ACCESS_KEY=${ACCESS_KEY} -e EVENT_ENDPOINT=${EVENT_ENDPOINT} \
 	-e CONTROLLER=${CONTR_HOST} -e APPD_PORT=${CONTR_PORT} \
 	-e NODE_NAME=${APP_NAME}_VERIFICATION_NODE -e APP_NAME=$APP_NAME -e TIER_NAME=ApplicationProcessor-Services \
-	-e SIM_HIERARCHY_1=${SIM_HIERARCHY_1} -e SIM_HIERARCHY_2=${SIM_HIERARCHY_2} \
+	-e MACHINE_PATH_1=${MACHINE_PATH_1} -e MACHINE_PATH_2=${MACHINE_PATH_2} \
 	--link adcapitaldb:adcapitaldb --link rabbitmq:rabbitmq -d appdynamics/adcapital-applicationprocessor:$VERSION
 sleep 10
 
@@ -47,7 +47,7 @@ echo -n "processor: "; docker run --name processor -h ${APP_NAME}-processor -e p
 	-e ACCOUNT_NAME=${ACCOUNT_NAME} -e ACCESS_KEY=${ACCESS_KEY} -e EVENT_ENDPOINT=${EVENT_ENDPOINT} \
 	-e CONTROLLER=${CONTR_HOST} -e APPD_PORT=${CONTR_PORT} \
 	-e NODE_NAME=${APP_NAME}_PROCESSOR_NODE -e APP_NAME=$APP_NAME -e TIER_NAME=LoanProcessor-Services \
-	-e SIM_HIERARCHY_1=${SIM_HIERARCHY_1} -e SIM_HIERARCHY_2=${SIM_HIERARCHY_2} \
+	-e MACHINE_PATH_1=${MACHINE_PATH_1} -e MACHINE_PATH_2=${MACHINE_PATH_2} \
 	--link adcapitaldb:adcapitaldb --link rabbitmq:rabbitmq -d appdynamics/adcapital-tomcat:$VERSION
 sleep 10
 
@@ -55,7 +55,7 @@ echo -n "queuereader: "; docker run --name queuereader -h ${APP_NAME}-queuereade
   	-e ACCOUNT_NAME=${ACCOUNT_NAME} -e ACCESS_KEY=${ACCESS_KEY} -e EVENT_ENDPOINT=${EVENT_ENDPOINT} \
   	-e CONTROLLER=${CONTR_HOST} -e APPD_PORT=${CONTR_PORT} \
   	-e NODE_NAME=${APP_NAME}_QUEUEREADER_NODE -e APP_NAME=$APP_NAME -e TIER_NAME=QueueReader-Services \
-  	-e SIM_HIERARCHY_1=${SIM_HIERARCHY_1} -e SIM_HIERARCHY_2=${SIM_HIERARCHY_2} \
+	-e MACHINE_PATH_1=${MACHINE_PATH_1} -e MACHINE_PATH_2=${MACHINE_PATH_2} \
   	--link rabbitmq:rabbitmq -d appdynamics/adcapital-queuereader:$VERSION
 	sleep 10
 
