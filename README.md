@@ -7,9 +7,9 @@ To build the containers, you need to supply paths to the AppDynamics agent insta
 Download the latest versions directly from the [AppDynamics download site](https://download.appdynamics.com)
 
 1. Run `build.sh` without commandline args to be prompted (with autocomplete) for the agent installer paths __or__
-2. Run `build.sh -a <App Server Agent> -y <Analytics Agent> [-j <Oracle JDK7>]` to supply agent installer paths
+2. Run `build.sh -a <App Server Agent zip> -m <Machine Agent zip> [-j <Oracle JDK7>]` to supply agent installer paths
 
-Note: Run build.sh with the `-p` flag to prepare the build environment but skip the actual docker container builds.  This will build the Dockerfiles and add the AppDynamics agents to the build dirs: the containers can then be built manually with `docker build -t <container-name> .`.  Use this option to save time when making updates to only one container.
+Note: Run build.sh with the `-p` flag to prepare the build environment but skip the actual docker container builds.  This will build the Dockerfiles and add the AppDynamics agents to the build dirs: the containers can then be built manually with `docker build -t <container-name> .`  Using this option saves time when making updates to only one or two containers.  You can also use the `-j` flag to avoid downloading the Oracle JDK.
 
 Running the AD-Capital Demo
 ---------------------------
