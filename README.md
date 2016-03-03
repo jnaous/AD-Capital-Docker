@@ -11,6 +11,18 @@ Download the latest versions directly from the [AppDynamics download site](https
 
 Note: Run build.sh with the `-p` flag to prepare the build environment but skip the actual docker container builds.  This will build the Dockerfiles and add the AppDynamics agents to the build dirs: the containers can then be built manually with `docker build -t <container-name> .`  Using this option saves time when making updates to only one or two containers.  You can also use the `-j` flag to avoid downloading the Oracle JDK.
 
+### Optimizing network download time
+
+If you want to (re-)build the containers with different agents and want to skip git clones, gradle download/builds or JDK/Tomcat downloads, you can use the following optional flags to build using local copies of all these artifacts:
+
+- `-j <location of the Oracle JDK rpm distro>`
+- `-t <location of the Apache Tomcat tar.gz distro>`
+- `-b <path to the AD-Capital project>`
+- `-l <path to the AD-Capital-Load project>`
+
+When using these flags, make sure that the paths are correct on your build system and that the downloaded artifacts are in the correct format.  You will need to run `gradle build` on the AD-Capital and AD-Capital-Load projects manually to generate the correct libraries.
+
+
 Running the AD-Capital Demo
 ---------------------------
 

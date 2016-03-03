@@ -1,0 +1,41 @@
+FROM appdynamics/adcapital-java:latest
+
+# Environment vars: Tomcat
+ENV TOMCAT_MINOR_VERSION 8.0.14
+ENV CATALINA_HOME /tomcat
+
+# Install Tomcat
+COPY /apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz /apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz
+RUN tar zxf /apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz \
+    && rm apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz \
+    && mv apache-tomcat-${TOMCAT_MINOR_VERSION} tomcat
+RUN cd ${CATALINA_HOME}/bin;chmod +x *.sh
+
+# App Server Agent
+ADD AppServerAgent.zip /
+RUN unzip -q /AppServerAgent.zip -d ${CATALINA_HOME}/appagent; rm AppServerAgent.zip
+
+# Zip Machine Agent Install
+ENV MACHINE_AGENT_HOME /machine-agent
+ADD MachineAgent.zip /
+RUN unzip -oq /MachineAgent.zip -d ${MACHINE_AGENT_HOME}
+RUN rm MachineAgent.zip
+
+ENV CLIENT_HOME /opt/queuereader
+RUN mkdir -p ${CLIENT_HOME}
+ADD QueueReader.jar ${CLIENT_HOME}/
+
+RUN export TERM=${TERM:-dumb}
+
+ADD startup.sh /
+ADD env.sh /
+RUN chmod 744 /startup.sh
+ADD start-analytics.sh /usr/bin/start-analytics
+RUN chmod 744 /usr/bin/start-analytics
+
+# Note: This command should not return or the container will exit
+CMD "/startup.sh"
+
+EXPOSE 80
+EXPOSE 8080
+EXPOSE 8009

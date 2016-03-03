@@ -10,13 +10,13 @@
 
 cleanUp() {
   if [ -z ${PREPARE_ONLY} ]; then 
-    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-Tomcat && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh apache-tomcat-*.tar.gz Rest.war portal.war processor.war)
     (cd ADCapital-Tomcat && rm -rf AD-Capital)
-    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-ApplicationProcessor && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh apache-tomcat-*.tar.gz Verification.jar)
     (cd ADCapital-ApplicationProcessor && rm -rf AD-Capital)
-    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh)
+    (cd ADCapital-QueueReader && rm -f AppServerAgent.zip MachineAgent.zip env.sh start-analytics.sh apache-tomcat-*.tar.gz QueueReader.jar)
     (cd ADCapital-QueueReader && rm -rf AD-Capital)
-    (cd ADCapital-Load && rm -rf AD-Capital-Load)
+    (cd ADCapital-Load && rm -rf AD-Capital-Load load-generator.zip)
     (cd ADCapital-Java && rm -f jdk-linux-x64.rpm)
   fi
 
@@ -41,20 +41,45 @@ buildContainers() {
   (cd ADCapital-Java; docker build -t appdynamics/adcapital-java .) || exit $?
 
   echo; echo "Building ADCapital-Tomcat..."
-  (cd ADCapital-Tomcat && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
-  (cd ADCapital-Tomcat && docker build -t appdynamics/adcapital-tomcat .) || exit $?
+  if [ -z ${LOCAL_BUILD} ]; then 
+    (cd ADCapital-Tomcat && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
+    (cd ADCapital-Tomcat && docker build -t appdynamics/adcapital-tomcat .) || exit $?
+  else
+    (cp ${LOCAL_TOMCAT} ADCapital-Tomcat)
+    (cp ${LOCAL_BUILD_PATH}/Rest/build/libs/Rest.war ADCapital-Tomcat/)
+    (cp ${LOCAL_BUILD_PATH}/Portal/build/libs/portal.war ADCapital-Tomcat/)
+    (cp ${LOCAL_BUILD_PATH}/Processor/build/libs/processor.war ADCapital-Tomcat/)
+    (cd ADCapital-Tomcat && docker build --no-cache -f Dockerfile.local -t appdynamics/adcapital-tomcat .) || exit $?
+  fi
 
   echo; echo "Building ADCapital-ApplicationProcessor..."
-  (cd ADCapital-ApplicationProcessor && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
-  (cd ADCapital-ApplicationProcessor && docker build -t appdynamics/adcapital-applicationprocessor .) || exit $?
+  if [ -z ${LOCAL_BUILD} ]; then 
+    (cd ADCapital-ApplicationProcessor && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
+    (cd ADCapital-ApplicationProcessor && docker build -t appdynamics/adcapital-applicationprocessor .) || exit $?
+  else
+    (cp ${LOCAL_TOMCAT} ADCapital-ApplicationProcessor)
+    (cp ${LOCAL_BUILD_PATH}/Verification/build/libs/Verification.jar ADCapital-ApplicationProcessor)
+    (cd ADCapital-ApplicationProcessor && docker build -f Dockerfile.local -t appdynamics/adcapital-applicationprocessor .) || exit $?
+  fi
 
   echo; echo "Building ADCapital-QueueReader..."
-  (cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
-  (cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .) || exit $?
+  if [ -z ${LOCAL_BUILD} ]; then 
+    (cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
+    (cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .) || exit $?
+  else
+    (cp ${LOCAL_TOMCAT} ADCapital-QueueReader)
+    (cp ${LOCAL_BUILD_PATH}/QueueReader/build/libs/QueueReader.jar ADCapital-QueueReader)
+    (cd ADCapital-QueueReader && docker build -f Dockerfile.local -t appdynamics/adcapital-queuereader .) || exit $?
+  fi
 
   echo; echo "Building ADCapital-Load..."
-  (cd ADCapital-Load && git clone https://github.com/Appdynamics/AD-Capital-Load.git) || exit $?
-  (cd ADCapital-Load && docker build -t appdynamics/adcapital-load .) || exit $?
+  if [ -z ${LOCAL_LOAD_BUILD} ]; then 
+    (cd ADCapital-Load && git clone https://github.com/Appdynamics/AD-Capital-Load.git) || exit $?
+    (cd ADCapital-Load && docker build -t appdynamics/adcapital-load .) || exit $?
+  else
+    (cp ${LOCAL_LOAD_BUILD_PATH}/build/distributions/load-generator.zip ADCapital-Load)
+    (cd ADCapital-Load && docker build -f Dockerfile.local -t appdynamics/adcapital-load .) || exit $?
+  fi
 }
 
 # Usage information
@@ -63,7 +88,10 @@ then
   echo "Specify agent locations: build.sh
           -a <Path to App Server Agent>
           -m <Path to Machine Agent>
-          -j <Path to Oracle JDK7>"
+          [-j <Path to Oracle JDK7>]
+          [-b <Path to local AD-Capital build>]
+          [-l <Path to local AD-Capital-Load build>]
+          [-t <Path to local Tomcat gzip distro>]"
   echo "Prompt for agent locations: build.sh"
   exit 0
 fi
@@ -74,7 +102,7 @@ then
   promptForAgents
 else
   # Allow user to specify locations of App Server and Analytics Agents
-  while getopts "a:m:j:p:" opt; do
+  while getopts "a:m:j:b:l:p:t:" opt; do
     case $opt in
       a)
         APP_SERVER_AGENT=$OPTARG
@@ -98,6 +126,21 @@ else
         echo "Prepare build environment only - no docker builds"
         PREPARE_ONLY=true;
         ;;
+      b)
+        LOCAL_BUILD_PATH=$OPTARG
+        echo "Using local Gradle build (AD-Capital) from: ${LOCAL_BUILD_PATH}"
+        LOCAL_BUILD=true;
+        ;;
+      t)
+        LOCAL_TOMCAT=$OPTARG
+        echo "Using local Tomcat archive: ${LOCAL_TOMCAT}"
+        LOCAL_BUILD=true;
+        ;;
+      l)
+        LOCAL_LOAD_BUILD_PATH=$OPTARG
+        echo "Using local Gradle build (AD-Capital-Load) from: ${LOCAL_LOAD_BUILD_PATH}"
+        LOCAL_LOAD_BUILD=true;
+        ;;
       \?)
         echo "Invalid option: -$OPTARG"
         ;;
@@ -111,6 +154,15 @@ fi
 
 if [ -z ${MACHINE_AGENT} ]; then
     echo "Error: Analytics Agent is required"; exit
+fi
+
+if [ "${LOCAL_BUILD}" = true ]; then
+  if [ ! -d ${LOCAL_BUILD_PATH} ]; then
+    echo "Error: ${LOCAL_BUILD_PATH} does not exist"; exit
+  fi 
+  if [ ! -f ${LOCAL_TOMCAT} ]; then
+    echo "Error: ${LOCAL_TOMCAT} does not exist"; exit
+  fi 
 fi
 
 if [ -z ${ORACLE_JDK7} ]
@@ -137,6 +189,7 @@ cp ${APP_SERVER_AGENT} ADCapital-Tomcat/AppServerAgent.zip
 cp ${APP_SERVER_AGENT} ADCapital-ApplicationProcessor/AppServerAgent.zip
 cp ${APP_SERVER_AGENT} ADCapital-QueueReader/AppServerAgent.zip
 
+# Add common environment to build
 cp env.sh ADCapital-Tomcat
 cp env.sh ADCapital-ApplicationProcessor
 cp env.sh ADCapital-QueueReader
