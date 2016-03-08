@@ -1,14 +1,13 @@
 FROM appdynamics/adcapital-java:latest
 
 # Environment vars: Tomcat
-ENV TOMCAT_MINOR_VERSION 8.0.14
 ENV CATALINA_HOME /tomcat
 
 # Install Tomcat
-COPY /apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz /apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz
-RUN tar zxf /apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz \
-    && rm apache-tomcat-${TOMCAT_MINOR_VERSION}.tar.gz \
-    && mv apache-tomcat-${TOMCAT_MINOR_VERSION} tomcat
+COPY /apache-tomcat.tar.gz /apache-tomcat.tar.gz
+RUN tar zxf /apache-tomcat.tar.gz \
+    && rm apache-tomcat.tar.gz \
+    && mv apache-tomcat* tomcat
 RUN cd ${CATALINA_HOME}/bin;chmod +x *.sh
 
 # App Server Agent

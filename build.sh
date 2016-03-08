@@ -45,7 +45,7 @@ buildContainers() {
     (cd ADCapital-Tomcat && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
     (cd ADCapital-Tomcat && docker build -t appdynamics/adcapital-tomcat .) || exit $?
   else
-    (cp ${LOCAL_TOMCAT} ADCapital-Tomcat)
+    (cp ${LOCAL_TOMCAT} ADCapital-Tomcat/apache-tomcat.tar.gz)
     (cp ${LOCAL_BUILD_PATH}/Rest/build/libs/Rest.war ADCapital-Tomcat/)
     (cp ${LOCAL_BUILD_PATH}/Portal/build/libs/portal.war ADCapital-Tomcat/)
     (cp ${LOCAL_BUILD_PATH}/Processor/build/libs/processor.war ADCapital-Tomcat/)
@@ -57,7 +57,7 @@ buildContainers() {
     (cd ADCapital-ApplicationProcessor && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
     (cd ADCapital-ApplicationProcessor && docker build -t appdynamics/adcapital-applicationprocessor .) || exit $?
   else
-    (cp ${LOCAL_TOMCAT} ADCapital-ApplicationProcessor)
+    (cp ${LOCAL_TOMCAT} ADCapital-ApplicationProcessor/apache-tomcat.tar.gz)
     (cp ${LOCAL_BUILD_PATH}/Verification/build/libs/Verification.jar ADCapital-ApplicationProcessor)
     (cd ADCapital-ApplicationProcessor && docker build -f Dockerfile.local -t appdynamics/adcapital-applicationprocessor .) || exit $?
   fi
@@ -67,7 +67,7 @@ buildContainers() {
     (cd ADCapital-QueueReader && git clone https://github.com/Appdynamics/AD-Capital.git) || exit $?
     (cd ADCapital-QueueReader && docker build -t appdynamics/adcapital-queuereader .) || exit $?
   else
-    (cp ${LOCAL_TOMCAT} ADCapital-QueueReader)
+    (cp ${LOCAL_TOMCAT} ADCapital-QueueReader/apache-tomcat.tar.gz)
     (cp ${LOCAL_BUILD_PATH}/QueueReader/build/libs/QueueReader.jar ADCapital-QueueReader)
     (cd ADCapital-QueueReader && docker build -f Dockerfile.local -t appdynamics/adcapital-queuereader .) || exit $?
   fi
